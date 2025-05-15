@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Honest - Business Technology Solutions</title>
+  <!-- Preload critical assets -->
+  <link rel="preload" href="public/HomeBG.jpg" as="image">
+  <link rel="preload" href="public/Team.png" as="image">
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -31,7 +34,7 @@
     .nav-underline {
       position: absolute;
       left: 0;
-      bottom: 0;
+      bottom: -2px;
       height: 2px;
       background: #34d399;
       transition: all 0.3s cubic-bezier(.4,0,.2,1);
@@ -42,13 +45,150 @@
     /* Hide scrollbars for horizontal nav on mobile */
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Mobile menu animations */
+    .mobile-menu-enter {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    .mobile-menu-enter-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 300ms, transform 300ms;
+    }
+    .mobile-menu-exit {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .mobile-menu-exit-active {
+      opacity: 0;
+      transform: translateX(-100%);
+      transition: opacity 300ms, transform 300ms;
+    }
+    
+    /* Improved mobile menu */
+    #mobile-menu {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+      border-bottom-left-radius: 1rem;
+      border-bottom-right-radius: 1rem;
+    }
+    
+    #mobile-menu.active {
+      transform: translateY(0);
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Better touch targets for mobile */
+    @media (max-width: 768px) {
+      .mobile-nav-link {
+        padding: 0.5rem 1rem;
+        width: 100%;
+        text-align: center;
+        display: block;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .mobile-nav-link:last-child {
+        border-bottom: none;
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    .animate-fade-in-delay {
+      animation: fadeIn 0.8s ease-out 0.2s forwards;
+      opacity: 0;
+    }
+    
+    .animate-fade-in-delay-2 {
+      animation: fadeIn 0.8s ease-out 0.4s forwards;
+      opacity: 0;
+    }
+    
+    /* Responsive image handling */
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Better mobile typography */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+      }
+      p {
+        font-size: 1rem !important;
+      }
+    }
+    
+    /* Add loading skeleton animation */
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+    
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+    }
+    
+    /* Lazy loading image placeholder */
+    .lazy-image {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    .lazy-image.loaded {
+      opacity: 1;
+    }
+    
+    /* Add header scroll styles */
+    .header-scrolled {
+      background-color: white !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-scrolled a {
+      color: #1f2937 !important;
+    }
+    
+    .header-scrolled a:hover {
+      color: #10b981 !important;
+    }
+    
+    .header-scrolled .logo-text {
+      color: #1f2937 !important;
+    }
+    
+    .header-scrolled .mobile-menu-btn {
+      color: #1f2937 !important;
+    }
   </style>
 </head>
 <body>
   <div class="min-h-screen flex flex-col">
     <!-- Navbar -->
-    <nav class="py-4 px-4 md:px-16 flex items-center justify-between bg-transparent w-full fixed top-0 left-0 z-20 backdrop-blur-md transition-transform duration-300" id="main-navbar">
-      <div class="text-white font-bold text-2xl uppercase text-center flex-shrink-0">
+    <nav class="py-4 px-4 md:px-16 flex items-center justify-between bg-transparent w-full fixed top-0 left-0 z-20 backdrop-blur-md transition-all duration-300" id="main-navbar">
+      <div class="text-white font-bold text-2xl uppercase text-center flex-shrink-0 logo-text">
         Honest
         <div class="text-sm font-normal text-lg text-center">infotech</div>
       </div>
@@ -60,43 +200,44 @@
         <a href="#about" class="text-white hover:text-techgreen-light transition">ABOUT</a>
         <a href="#team" class="text-white hover:text-techgreen-light transition">TEAM</a>
         <a href="#contact" class="text-white hover:text-techgreen-light transition">CONTACT</a>
-        <div class="nav-underline" id="nav-underline" style="width:0"></div>
       </div>
       <!-- Mobile Nav Button -->
-      <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none">
+      <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none mobile-menu-btn">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </button>
       <!-- Mobile Nav -->
-      <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 z-50 flex-col items-center justify-center hidden">
-        <button id="close-mobile-menu" class="absolute top-6 right-6 text-white text-3xl">&times;</button>
-        <div class="flex flex-col space-y-8 items-center mt-24">
-          <a href="#" class="text-white text-xl hover:text-techgreen-light transition" onclick="closeMobileMenu()">HOME</a>
-          <a href="#services" class="text-white text-xl hover:text-techgreen-light transition" onclick="closeMobileMenu()">SERVICES</a>
-          <a href="#products" class="text-white text-xl hover:text-techgreen-light transition" onclick="closeMobileMenu()">PRODUCTS</a>
-          <a href="#about" class="text-white text-xl hover:text-techgreen-light transition" onclick="closeMobileMenu()">ABOUT</a>
-          <a href="#team" class="text-white text-xl hover:text-techgreen-light transition" onclick="closeMobileMenu()">TEAM</a>
-          <a href="#contact" class="text-white text-xl hover:text-techgreen-light transition" onclick="closeMobileMenu()">CONTACT</a>
+      <div id="mobile-menu" class="fixed top-0 left-0 w-full h-auto bg-gray-900 z-50 flex-col items-center justify-center hidden shadow-lg">
+        <button id="close-mobile-menu" class="absolute top-4 right-4 text-white text-2xl hover:text-techgreen-light transition-colors duration-300">&times;</button>
+        <div class="flex flex-col items-center py-8">
+          <a href="#" class="mobile-nav-link text-white text-base py-2 hover:text-techgreen-light transition-colors duration-300" onclick="closeMobileMenu()">HOME</a>
+          <a href="#services" class="mobile-nav-link text-white text-base py-2 hover:text-techgreen-light transition-colors duration-300" onclick="closeMobileMenu()">SERVICES</a>
+          <a href="#products" class="mobile-nav-link text-white text-base py-2 hover:text-techgreen-light transition-colors duration-300" onclick="closeMobileMenu()">PRODUCTS</a>
+          <a href="#about" class="mobile-nav-link text-white text-base py-2 hover:text-techgreen-light transition-colors duration-300" onclick="closeMobileMenu()">ABOUT</a>
+          <a href="#team" class="mobile-nav-link text-white text-base py-2 hover:text-techgreen-light transition-colors duration-300" onclick="closeMobileMenu()">TEAM</a>
+          <a href="#contact" class="mobile-nav-link text-white text-base py-2 hover:text-techgreen-light transition-colors duration-300" onclick="closeMobileMenu()">CONTACT</a>
         </div>
       </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="h-screen flex items-center relative overflow-hidden pt-24 md:pt-0" style="background-image: url('public/HomeBG.jpg'); background-size: cover; background-position: center;">
+    <section class="min-h-screen flex items-center relative overflow-hidden pt-24 md:pt-0" style="background-image: url('public/HomeBG.jpg'); background-size: cover; background-position: center;">
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
       <div class="container mx-auto px-4 md:px-16 z-10">
         <div class="max-w-2xl">
-          <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+          <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight animate-fade-in">
             Adjust Your Business To <span class="text-techgreen-light">The Digital Era</span>
           </h1>
-          <p class="text-gray-300 mb-8 text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus at magna a libero consectetur.
+          <p class="text-gray-300 mb-8 text-lg md:text-xl animate-fade-in-delay">
+            Transform your business with cutting-edge technology solutions. We help you navigate the digital landscape with confidence and innovation.
           </p>
-          <!-- <button class="bg-techgreen px-8 py-3 text-white font-medium rounded-md hover:bg-techgreen-dark transition duration-300">
+          <!-- <button class="bg-techgreen px-8 py-3 text-white font-medium rounded-md hover:bg-techgreen-dark transition duration-300 transform hover:scale-105 animate-fade-in-delay-2">
             GET STARTED
           </button> -->
         </div>
       </div>
+      <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent"></div>
     </section>
 
     <!-- Services Section -->
@@ -109,45 +250,45 @@
           </h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
-          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
             <div class="flex justify-center mb-4">
-              <div class="bg-gray-100 p-3 rounded-full">
-                <div class="w-10 h-10 flex items-center justify-center text-techgreen">
+              <div class="bg-gray-100 p-3 rounded-full group-hover:bg-techgreen/10 transition-colors duration-300">
+                <div class="w-10 h-10 flex items-center justify-center text-techgreen group-hover:scale-110 transition-transform duration-300">
                   💼
                 </div>
               </div>
             </div>
-            <h3 class="text-xl font-semibold text-center mb-4">Graphic Design</h3>
+            <h3 class="text-xl font-semibold text-center mb-4 group-hover:text-techgreen transition-colors duration-300">Graphic Design</h3>
             <p class="text-gray-600 text-center">We can help you with Quality Web Designs, 
               Graphic Designs, Print Designs, Web Based Designs and much more. Since 2014 our 
               graphic designs have been associated with almost all the sectors of industry. 
               We can satisfy any and all your graphic designing needs.</p>
           </div>
           
-          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
             <div class="flex justify-center mb-4">
-              <div class="bg-gray-100 p-3 rounded-full">
-                <div class="w-10 h-10 flex items-center justify-center text-techgreen">
+              <div class="bg-gray-100 p-3 rounded-full group-hover:bg-techgreen/10 transition-colors duration-300">
+                <div class="w-10 h-10 flex items-center justify-center text-techgreen group-hover:scale-110 transition-transform duration-300">
                   🎨
                 </div>
               </div>
             </div>
-            <h3 class="text-xl font-semibold text-center mb-4">Website Design</h3>
+            <h3 class="text-xl font-semibold text-center mb-4 group-hover:text-techgreen transition-colors duration-300">Website Design</h3>
             <p class="text-gray-600 text-center">We provide very creative and full mobile responsive 
               Website Design at unbeatable pricing. We do Wordpress, Codaeigniter, 
               Laravel, and all sort of eCommerce Website Designing. We have make the websites 
               for Startups, small and large businesses to enhance potential outcomes of business.</p>
           </div>
           
-          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
             <div class="flex justify-center mb-4">
-              <div class="bg-gray-100 p-3 rounded-full">
-                <div class="w-10 h-10 flex items-center justify-center text-techgreen">
+              <div class="bg-gray-100 p-3 rounded-full group-hover:bg-techgreen/10 transition-colors duration-300">
+                <div class="w-10 h-10 flex items-center justify-center text-techgreen group-hover:scale-110 transition-transform duration-300">
                   📱
                 </div>
               </div>
             </div>
-            <h3 class="text-xl font-semibold text-center mb-4">Digital Marketing</h3>
+            <h3 class="text-xl font-semibold text-center mb-4 group-hover:text-techgreen transition-colors duration-300">Digital Marketing</h3>
             <p class="text-gray-600 text-center">Our process is simple & unique. 
               We analyze your current marketing strategies. And with a problem-solving mind,
                we offer creative ways to build, plan, and promote your website. We have designed 
@@ -155,29 +296,29 @@
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:px-32">
-          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
             <div class="flex justify-center mb-4">
-              <div class="bg-gray-100 p-3 rounded-full">
-                <div class="w-10 h-10 flex items-center justify-center text-techgreen">
+              <div class="bg-gray-100 p-3 rounded-full group-hover:bg-techgreen/10 transition-colors duration-300">
+                <div class="w-10 h-10 flex items-center justify-center text-techgreen group-hover:scale-110 transition-transform duration-300">
                   🛠️
                 </div>
               </div>
             </div>
-            <h3 class="text-xl font-semibold text-center mb-4">Desktop Application</h3>
+            <h3 class="text-xl font-semibold text-center mb-4 group-hover:text-techgreen transition-colors duration-300">Desktop Application</h3>
             <p class="text-gray-600 text-center">We can help you with Quality Web Designs, Graphic Designs, 
               Print Designs, Web Based Designs and much more. Since 2014 our graphic designs have been associated
                with almost all the sectors of industry. We can satisfy any and all your graphic designing needs.</p>
           </div>
           
-          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+          <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
             <div class="flex justify-center mb-4">
-              <div class="bg-gray-100 p-3 rounded-full">
-                <div class="w-10 h-10 flex items-center justify-center text-techgreen">
+              <div class="bg-gray-100 p-3 rounded-full group-hover:bg-techgreen/10 transition-colors duration-300">
+                <div class="w-10 h-10 flex items-center justify-center text-techgreen group-hover:scale-110 transition-transform duration-300">
                   ⚙️
                 </div>
               </div>
             </div>
-            <h3 class="text-xl font-semibold text-center mb-4">Network Installation</h3>
+            <h3 class="text-xl font-semibold text-center mb-4 group-hover:text-techgreen transition-colors duration-300">Network Installation</h3>
             <p class="text-gray-600 text-center">We can help you with Quality Web Designs, Graphic Designs, 
               Print Designs, Web Based Designs and much more. Since 2014 our graphic designs have been 
               associated with almost all the sectors of industry. We can satisfy any and all your graphic designing needs.</p>
@@ -423,48 +564,63 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           <div>
-            <form id="contactForm" onsubmit="handleSubmit(event)">
-              <div class="mb-6">
-                <label for="name" class="block text-gray-700 mb-2">Full Name</label>
+            <form id="contactForm" onsubmit="handleSubmit(event)" class="space-y-6">
+              <div class="relative">
+                <label for="name" class="block text-gray-700 mb-2 font-medium">Full Name</label>
                 <input 
                   type="text" 
                   id="name" 
                   name="name"
                   required
-                  class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-techgreen"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-techgreen focus:border-transparent transition-all duration-300"
                   placeholder="John Doe"
                 />
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none opacity-0 transition-opacity duration-300">
+                  <svg class="h-5 w-5 text-techgreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
               </div>
               
-              <div class="mb-6">
-                <label for="email" class="block text-gray-700 mb-2">Email Address</label>
+              <div class="relative">
+                <label for="email" class="block text-gray-700 mb-2 font-medium">Email Address</label>
                 <input 
                   type="email" 
                   id="email" 
                   name="email"
                   required
-                  class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-techgreen"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-techgreen focus:border-transparent transition-all duration-300"
                   placeholder="john@example.com"
                 />
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none opacity-0 transition-opacity duration-300">
+                  <svg class="h-5 w-5 text-techgreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
               </div>
               
-              <div class="mb-6">
-                <label for="message" class="block text-gray-700 mb-2">Message</label>
+              <div class="relative">
+                <label for="message" class="block text-gray-700 mb-2 font-medium">Message</label>
                 <textarea 
                   id="message" 
                   name="message"
                   required
                   rows="5"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-techgreen"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-techgreen focus:border-transparent transition-all duration-300 resize-none"
                   placeholder="Type your message here..."
                 ></textarea>
+                <div class="absolute bottom-3 right-3 pointer-events-none opacity-0 transition-opacity duration-300">
+                  <svg class="h-5 w-5 text-techgreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
               </div>
               
               <button 
                 type="submit" 
-                class="bg-techgreen text-white px-8 py-3 rounded-md hover:bg-techgreen-dark transition duration-300"
+                class="w-full bg-techgreen text-white px-8 py-3 rounded-md hover:bg-techgreen-dark transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-techgreen focus:ring-offset-2"
               >
-                SEND
+                SEND MESSAGE
               </button>
             </form>
 
@@ -479,6 +635,18 @@
                   message: formData.get('message')
                 };
 
+                // Add loading state
+                const button = event.target.querySelector('button[type="submit"]');
+                const originalText = button.textContent;
+                button.disabled = true;
+                button.innerHTML = `
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Sending...
+                `;
+
                 // Send data to your backend API
                 fetch('/api/contact', {
                   method: 'POST',
@@ -489,22 +657,66 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                  alert('Message sent successfully!');
+                  // Show success state
+                  button.innerHTML = `
+                    <svg class="h-5 w-5 text-white inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Message Sent!
+                  `;
+                  button.classList.remove('bg-techgreen', 'hover:bg-techgreen-dark');
+                  button.classList.add('bg-green-500', 'hover:bg-green-600');
                   event.target.reset();
+                  
+                  // Reset button after 3 seconds
+                  setTimeout(() => {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    button.classList.add('bg-techgreen', 'hover:bg-techgreen-dark');
+                  }, 3000);
                 })
                 .catch(error => {
                   console.error('Error:', error);
-                  alert('There was an error sending your message. Please try again.');
+                  button.disabled = false;
+                  button.textContent = 'Error! Try Again';
+                  button.classList.remove('bg-techgreen', 'hover:bg-techgreen-dark');
+                  button.classList.add('bg-red-500', 'hover:bg-red-600');
+                  
+                  // Reset button after 3 seconds
+                  setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-red-500', 'hover:bg-red-600');
+                    button.classList.add('bg-techgreen', 'hover:bg-techgreen-dark');
+                  }, 3000);
                 });
               }
+
+              // Add form field validation feedback
+              document.querySelectorAll('#contactForm input, #contactForm textarea').forEach(field => {
+                field.addEventListener('input', function() {
+                  const isValid = this.checkValidity();
+                  const icon = this.parentElement.querySelector('svg');
+                  if (isValid) {
+                    icon.classList.remove('opacity-0');
+                    this.classList.add('border-green-500');
+                    this.classList.remove('border-red-500');
+                  } else {
+                    icon.classList.add('opacity-0');
+                    this.classList.remove('border-green-500');
+                    this.classList.add('border-red-500');
+                  }
+                });
+              });
             </script>
           </div>
-          <div>
+          <div class="relative">
             <img 
               src="public/Team.png" 
               alt="Our team" 
-              class="w-full h-60 md:h-full object-cover rounded-lg"
+              class="w-full h-60 md:h-full object-cover rounded-lg shadow-lg"
             />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg"></div>
           </div>
         </div>
       </div>
@@ -589,35 +801,35 @@
     </footer>
   </div>
   <script>
-    // Navbar underline effect for desktop
-    document.addEventListener('DOMContentLoaded', function () {
-      const nav = document.getElementById('navbar-links');
-      if (!nav) return;
-      const underline = document.getElementById('nav-underline');
-      const links = nav.querySelectorAll('a');
-      nav.addEventListener('mouseleave', () => { underline.style.width = '0'; });
-      links.forEach(link => {
-        link.addEventListener('mouseenter', function () {
-          const rect = link.getBoundingClientRect();
-          const navRect = nav.getBoundingClientRect();
-          underline.style.width = rect.width + 'px';
-          underline.style.left = (rect.left - navRect.left) + 'px';
-          underline.style.top = (rect.bottom - navRect.top) + 2 + 'px';
-        });
-        link.addEventListener('mouseleave', function () {
-          underline.style.width = '0';
-        });
-      });
+    // Add scroll-based header styling
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('main-navbar');
+      const scrollPosition = window.scrollY;
+      
+      if (scrollPosition > 50) {
+        navbar.classList.add('header-scrolled');
+      } else {
+        navbar.classList.remove('header-scrolled');
+      }
     });
+
     // Mobile menu toggle
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     const closeBtn = document.getElementById('close-mobile-menu');
+    
+    function toggleMobileMenu() {
+      mobileMenu.classList.toggle('hidden');
+      mobileMenu.classList.toggle('active');
+    }
+    
     function closeMobileMenu() {
       mobileMenu.classList.add('hidden');
+      mobileMenu.classList.remove('active');
     }
+    
     if (mobileBtn && mobileMenu && closeBtn) {
-      mobileBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden'));
+      mobileBtn.addEventListener('click', toggleMobileMenu);
       closeBtn.addEventListener('click', closeMobileMenu);
     }
 
@@ -637,6 +849,77 @@
         lastScroll = curr;
       });
     })();
+
+    // Add lazy loading for images
+    document.addEventListener('DOMContentLoaded', function() {
+      const lazyImages = document.querySelectorAll('img[data-src]');
+      
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.add('loaded');
+            observer.unobserve(img);
+          }
+        });
+      });
+      
+      lazyImages.forEach(img => imageObserver.observe(img));
+    });
+    
+    // Add loading state for sections
+    function showLoadingState(section) {
+      const content = section.innerHTML;
+      section.innerHTML = `
+        <div class="skeleton w-full h-96 rounded-lg"></div>
+      `;
+      return content;
+    }
+    
+    function hideLoadingState(section, content) {
+      section.innerHTML = content;
+    }
+    
+    // Add smooth scroll behavior
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+    
+    // Add scroll progress indicator
+    const progressBar = document.createElement('div');
+    progressBar.className = 'fixed top-0 left-0 h-1 bg-techgreen transition-all duration-300 z-50';
+    document.body.appendChild(progressBar);
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + '%';
+    });
+    
+    // Add section visibility tracking
+    const sections = document.querySelectorAll('section');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in');
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+    
+    sections.forEach(section => observer.observe(section));
   </script>
 </body>
 </html>
